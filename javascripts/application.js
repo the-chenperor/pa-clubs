@@ -1,5 +1,3 @@
-var clubData = {"categories":["Arts","Economics","Environmental","Multicultural"],"clubs":[{"name":"International Club (iClub)","board":{"CAMD Liason":["Adrienne Allen"],"Co-Heads of NISO":["Marcello Rossi","Rosa Morona"],"Administrative Secretary":["Mofopefoluwa Olarinmoye"],"Publicity and Outreach Director":["Michael Shen"],"Upper Board":["Malika Dia","Tucker Drew","Moe Sunami"],"Lower Board":["Serena Ren"],"Faculty Advisor:":["L. Springer"]},"day":["Wednesday"],"time":"5:30","location":"CAMD","description":"Main purpose of this club is to provide support for PA international students and to advance knowledge and understanding of foreign cultures within the school community.  We talk about customs, describe holidays, try to find solutions to cultural incidents, talk about countries, etc.  We play cultural simulation games or volleyball games with other groups from Diversity Alliance.","website":"","categories":[]},{"name":"Phillipian","board":{"Editor in Chief":["Sara J. Luzuriaga"],"Managing Editors":["Skylar-Bree E. Takyi","Erica S. Shin","Avery J. Jonas"],"Executive Digital Editor":["Pranav K. Tadikonda"],"Faculty Advisor":["N. Scott"]},"day":["Monday","Tuesday","Wednesday","Thursday"],"time":"8:00","location":"Newsroom","description":"The Phillipian is an independent student run weekly newspaper.  The paper is always working to improve its content to better serve the Andover community while staying conscious of the responsibilities of producing an entirely uncensored publication.","website":"","categories":[]},{"name":"Art Exchange","board":{"President":["Corissa Hollenbeck"],"Head of Photography":["Lauren Luo"],"Head of Painting and Drawing":["Sabrina Lu"],"Head of Mixed Media":["Jessica Lee"],"Faculty Advisor":["E. Crivelli"]},"day":["Tuesday"],"time":"5:45","location":"Elson Art Center","description":"Our goal is to create an environment for dedicated artists outside of the classroom, in order to learn from each other artistically as well as educate others about global and Andover-specific issues. We aim to gather a group of dedicated artists who will create pieces that send a message or address a cause that applies both to our campus community as well as the world beyond Andover.","website":"","categories":["Arts", ""]}]}
-
 var currentClub;
 
 $(document).ready(function(){
@@ -7,18 +5,50 @@ $(document).ready(function(){
   // Include parse inside!!
   Parse.initialize("nhetQrvqKNFE5veguHPycojrCoyJA87zrxzg1wQ2", "KRqpMHMwUjDIahX9pOMSNnqaPOSbFDxPaksRpCfx");
 
-  // Test Object
-  var TestObject = Parse.Object.extend("TestObject");
-  var testObject = new TestObject();
-  testObject.save({foo: "bar"}).then(function(object) {
-    alert("yay! it worked");
-  });
+  // Populate #leftFeed
+  var Club = Parse.Object.extend("Clubs");
+  var query = new Parse.Query(Club);
+  // This would be the place to narrow the query (e.g., query.equalTo("name", "International Club"))
+  query.find({
+    success: function(results) {
+      console.log("Successfully retrieved" + results.length + " scores.");
+      // Do something with the returned Parse.Object values
+      for (var i = 0; i < results.length; i++) {
+        var object = results[i];
+        $("#leftFeed").append("<div class='feedCell btn btn-1a'><h3 class='feedClubTitle'>" + object.get('name') + "</h3></div>")
+      }
+    },
+    error: function(error) {
+      alert("Error: " + error.code + " " + error.message);
+    }
+  })
 
-  $(".feedCell").click(function(){
+  $(document).on('click', '.feedCell', function(){
+    // Mark the selected club
     $(currentClub).find('h3').css("font-weight", "normal")
     currentClub = $(this)
     $(this).find('h3').css("font-weight", "bold")
-    $("#clubTitle").text($(this).find('h3').text())
+
+    var clubName = $(this).find('h3').text()
+    var query = new Parse.Query(Club);
+    query.equalTo("name", clubName)
+    query.find({
+      success: function(results) {
+        for (var i = 0; i < results.length; i++) {
+          var object = results[i];
+          var time = object.get('time')
+
+          $("#clubTitle").text(object.get('name'))
+          $("#time").text(time.start_time + " to " + time.end_time + "pm on " + object.get('day') + "s")
+          $("#description").text(object.get('description'))
+          $("#info-list li:nth-child(1) .info-value").text(object.get('location'))
+          $("#info-list li:nth-child(3) .info-value").text(object.get('advisor'))
+        }
+      },
+      error: function(error) {
+        alert("Error: " + error.code + " " + error.message);
+      }
+    })
   })
 
   $("#subscribeButton").click(function(){

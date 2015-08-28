@@ -166,22 +166,22 @@ h2#clubTitle {
 }
 
 h3#time {
-    margin-top: 0.4rem;
-    font-size: 1.3rem;
+    margin-top: 0.6rem;
+    font-size: 1.33rem;
 }
 
 p#description {
-    margin-top: 1.9rem;
+    margin-top: 1.8rem;
     font-size: 1.33rem;
-    line-height: 2.0rem;
+    line-height: 2.2rem;
 }
 
 #info-list {
-    margin-top: 1.7rem;
+    margin-top: 1.9rem;
 }
 
 #info-list li{
-  margin: 12px 0;
+  margin: 12.5px 0;
   font-size: 1.33rem;
 }
 
